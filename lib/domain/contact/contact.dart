@@ -1,3 +1,8 @@
+import 'package:isar/isar.dart';
+
+part 'contact.g.dart';
+
+@collection
 class Contact {
   Contact({
     required this.name,
@@ -7,6 +12,7 @@ class Contact {
     this.address,
   });
 
+  Id id = Isar.autoIncrement;
   String name;
   String lastName;
   String phone;
