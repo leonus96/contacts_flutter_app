@@ -18,7 +18,7 @@ class ContactsApp extends StatelessWidget {
       routes: {
         '/': (_) => const HomePage(),
         'detail': (_) => const ContactDetail(),
-        'form': (_) => ContactForm(),
+        'form': (_) => const ContactForm(),
       },
     );
   }

@@ -1,4 +1,4 @@
-import 'package:contacts/infrastructure/isar/idar_database.dart';
+import 'package:contacts/infrastructure/isar/isar_database.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'isar_provider.g.dart';

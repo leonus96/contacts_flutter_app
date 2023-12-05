@@ -1,23 +1,50 @@
 import 'package:contacts/domain/contact/contact.dart';
+import 'package:contacts/presentation/providers/isar/isar_provider.dart';
 import 'package:contacts/presentation/widgets/contact_list_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isar/isar.dart';
 
-final List<Contact> contacts = [
-  Contact(name: 'Joseph', lastName: 'Leon', phone: '9232328971'),
-  Contact(name: 'Cesar', lastName: 'Faggiani', phone: '23423423'),
-  Contact(name: 'Miguel', lastName: 'Castillo', phone: '6432421'),
-  Contact(name: 'Katerin', lastName: 'Villalobos', phone: '98163291'),
-];
-
-class HomePage extends StatelessWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
+  ConsumerState<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends ConsumerState<HomePage> {
+  List<Contact> contacts = [];
+
+  /// Se ejecuta o llama antes del primer build.
+  @override
+  void initState() {
+    super.initState();
+    _loadContacts();
+  }
+
+  void _loadContacts() async {
+    final isar = ref.read(isarProvider);
+    final db = await isar.db();
+
+    /// Traemos todos los contactos de la base de datos.
+    contacts = await db.contacts.where().findAll();
+    setState(() {});
+  }
+
+  /// Se ejecuta cada vez que se tiene que construir los widgets en pantalla.
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Contacts')),
+      appBar: AppBar(title: const Text('Contactos')),
       body: ListView(
-        children: contacts.map((e) => ContactListItem(contact: e)).toList(),
+        children: contacts
+            .map((e) => ContactListItem(
+                  contact: e,
+                  refresh: () {
+                    _loadContacts();
+                  },
+                ))
+            .toList(),
       ),
       bottomNavigationBar: BottomAppBar(
         child: Row(
@@ -31,11 +58,16 @@ class HomePage extends StatelessWidget {
               ],
             ),
             FloatingActionButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed('form');
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              onPressed: () async {
+                await Navigator.of(context).pushNamed('form');
+                _loadContacts();
               },
               elevation: 0,
-              child: const Icon(Icons.add),
+              child: Icon(
+                Icons.add,
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
             ),
           ],
         ),

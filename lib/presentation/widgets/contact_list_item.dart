@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 
 class ContactListItem extends StatelessWidget {
   final Contact contact;
+  final Function refresh;
 
-  const ContactListItem({Key? key, required this.contact}) : super(key: key);
+  const ContactListItem({Key? key, required this.contact, required this.refresh})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -13,8 +15,9 @@ class ContactListItem extends StatelessWidget {
       leading: ContactAvatar(contact: contact),
       title: Text('${contact.name} ${contact.lastName}'),
       subtitle: Text(contact.phone),
-      onTap: () {
-        Navigator.of(context).pushNamed('detail');
+      onTap: () async {
+        await Navigator.of(context).pushNamed('detail', arguments: contact);
+        refresh();
       },
     );
   }
